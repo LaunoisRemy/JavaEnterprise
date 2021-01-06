@@ -1,2 +1,64 @@
-# Project exclude paths
-/target/
+# Project Ignores Files
+
+# Maven
+.mvn
+*.classpath
+*.project
+*.settings
+/bin/*
+/target/*
+
+#gradle
+.gradle
+/build
+
+# Compiled class file
+*.class
+
+# Package Files
+*.jar
+*.war
+*.ear
+*.zip
+*.tar.gz
+*.rar
+
+
+# JetBrains IDEs
+.idea/
+*.iml
+
+# Eclipse
+.project
+.classpath
+.settings
+
+# Netbeans
+nbactions*.xml
+nb-configuration*.xml
+
+
+# Folder config file
+Desktop.ini
+
+# Recycle Bin used on file shares
+$RECYCLE.BIN/
+
+#Extra Folders
+/unused
+**/.DS_Store
+
+#spring
+.springBeans
+
+target/
+pom.xml.tag
+pom.xml.releaseBackup
+pom.xml.versionsBackup
+pom.xml.next
+release.properties
+dependency-reduced-pom.xml
+buildNumber.properties
+.mvn/timing.properties
+# https://github.com/takari/maven-wrapper#usage-without-binary-jar
+.mvn/wrapper/maven-wrapper.jar
