@@ -10,33 +10,32 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>JSP - Hello World</title>
+    <title>JSP - Converter - Remy</title>
 </head>
 <body>
 
 <div class="container">
-    <h1><%= "Converter" %></h1>
+    <h1><%= "Converter Euro" %></h1>
     <jsp:useBean id="convert" scope="session" class="Converter.ConverterEjbBean" />
     <%
         if(request.getParameter("convert") == null){ %>
     <form method="get" action="index.jsp">
         <div class="form-group">
-            <label for="amount">Convert euro to ?</label>
+            <label for="amount">Enter your amount :</label>
             <input type="text" class="form-control" id="amount" name="amount" aria-describedby="Enter amount" placeholder="Enter amount">
-            <small id="emailHelp" class="form-text text-muted">It will be faster than you think</small>
         </div>
         <div>
             <%
-                List<String> list = new ArrayList<>(convert.getAllCodeCurrencyRate().keySet());
-                Collections.sort(list);
+                List<String> listCurrency = new ArrayList<>(convert.getAllCodeCurrencyRate().keySet());
+                Collections.sort(listCurrency);
             %>
             <select id="currency" name="currency" class="form-select form-select-lg mb-3" aria-label=".form-select-lg example">
                 <option value = null selected>Chose your currency</option>
                 <%
-                    for (String item: list
+                    for (String currency: listCurrency
                     ) {
                 %>
-                <option id=<%=item%> value=<%=item%>><%=item%></option>
+                <option id=<%=currency%> value=<%=currency%>><%=currency%></option>
                 <%
                     }
                 %>
@@ -69,7 +68,6 @@
     %>
     <%
         if(request.getParameter("convert")==null){ %>
-
     <% }
     %>
 
