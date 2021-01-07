@@ -17,8 +17,6 @@
 <div class="container">
     <h1> Converter Euro </h1>
     <jsp:useBean id="convert" scope="session" class="Converter.ConverterEjbBean" />
-    <%
-        if(request.getParameter("convert") == null){ %>
     <form method="get" action="index.jsp">
         <div class="form-group">
             <label for="amount">Enter your amount :</label>
@@ -60,20 +58,7 @@
             }
         }
     %>
-    <%
-    }else {%>
-    <p>Error</p>
-    <%
-        }
-    %>
-<%--    <%--%>
-<%--        if(request.getParameter("convert")==null){ %>--%>
-<%--    <% }--%>
-<%--    %>--%>
 
 </div>
-
-<br/>
-<a href="hello-servlet">Hello Servlet</a>
 </body>
 </html>
