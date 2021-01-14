@@ -53,20 +53,38 @@ public class ConverterEjbBean implements IConverter{
         Document document = sxb . build (con.getInputStream());
         Element racine = document.getRootElement ( ) ;
         List<Element> elem = racine.getChild ( "CcyTbl" ).getChildren();
+        List<String> currencyAlreadyFin = new ArrayList<>();
         elem.forEach(e -> {
             if(e.getChild("Ccy") != null){
                 String currency = e.getChild("Ccy").getValue();
                 if(codeToRate.containsKey(currency)){
-                    List<String> namePays = new ArrayList<>();
-                    namePays.add(e.getChild("CtryNm").getValue());
-                    Monnaie m = new Monnaie(namePays,e.getChild("CcyNm").getValue(),currency,codeToRate.get(currency));
-                    allData.put(m, euroToOtherCurrency(monnaie,m.getTauxChange()));
+                    if(!currencyAlreadyFin.contains(currency)){
+                        List<String> namePays = new ArrayList<>();
+                        namePays.add(e.getChild("CtryNm").getValue());
+                        Monnaie m = new Monnaie(namePays,e.getChild("CcyNm").getValue(),currency,codeToRate.get(currency));
+                        allData.put(m, euroToOtherCurrency(monnaie,m.getTauxChange()));
+                        currencyAlreadyFin.add(currency);
+                    }else{
+                        Monnaie m = findMonnaieByCurrency(currency);
+                        m.addPays(e.getChild("CtryNm").getValue());
+                    }
+
                 }
             }
         });
         return allData;
     }
 
+    public Monnaie findMonnaieByCurrency(String currency)
+    {
+        for (Map.Entry<Monnaie, Double> m : allData.entrySet()
+             ) {
+            if(m.getKey().getCodeMonnaie().equals(currency)){
+                return m.getKey();
+            }
+        }
+        return null;
+    }
     public List<String> getAllCodeCurrency(){
         SAXBuilder sxb = new SAXBuilder();
         List<String> res = new ArrayList<>();

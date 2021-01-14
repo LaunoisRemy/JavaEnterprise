@@ -37,6 +37,7 @@
 nbactions*.xml
 nb-configuration*.xml
 
+src/main/resources/properties/mail.properties
 
 # Folder config file
 Desktop.ini
@@ -50,7 +51,6 @@ $RECYCLE.BIN/
 
 #spring
 .springBeans
-src/main/resources/properties/mail.properties
 target/
 pom.xml.tag
 pom.xml.releaseBackup

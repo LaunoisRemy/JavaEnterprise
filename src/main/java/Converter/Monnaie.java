@@ -57,4 +57,8 @@ public class Monnaie implements Serializable {
                 ", tauxChange=" + tauxChange +
                 '}';
     }
+
+    public void addPays(String p){
+        pays.add(p);
+    }
 }

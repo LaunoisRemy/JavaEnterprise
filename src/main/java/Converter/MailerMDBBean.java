@@ -63,6 +63,24 @@ public class MailerMDBBean implements MessageListener {
                     // dans une chaine de caracteres contenant les balises HTML
                     // necessaires pour construire le tableau HTML (variable content)
                     // Voir la capture d'ecran de la Figure 1
+                    StringBuilder builder = new StringBuilder();
+                    builder.append("<table>")
+                            .append("<thead>")
+                            .append("<tr><th>Currency</th><th>Actual rate</th><th>Converted amount</th>")
+                            .append("</thead>")
+                            .append("<tbody>");
+                    map.forEach((money, convertedAmount) ->
+                    {
+                        builder.append("<tr><td>")
+                                .append(money.getCodeMonnaie()).append(" (").append(money.getNameMonnaie()).append(")")
+                                .append("</td><td>")
+                                .append(money.getTauxChange())
+                                .append("</td><td>")
+                                .append(convertedAmount)
+                                .append("</td></tr>");
+                    });
+                    content+= "/n"+builder;
+                    builder.append("</table>");
                     msg.setContent(content,"text/html;charset=utf8");
                     msg.setSentDate(Calendar.getInstance().getTime());
                     // Preparation de l'envoi du mail
