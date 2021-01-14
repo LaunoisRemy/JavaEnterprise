@@ -17,19 +17,20 @@ import java.util.stream.Collectors;
 public class ConverterEjbBean implements IConverter{
     public ConverterEjbBean() {
     }
-    Map<String,Double> codeToRate = new HashMap<>();
+    //Map<String,Double> codeToRate = new HashMap<>();
     Map<Monnaie,Double> allData = new HashMap<>();
 
     @Override
-    public Double euroToOtherCurrency(double amount, String currencyCode) {
+    public Double euroToOtherCurrency(double amount,Double rate) {
         try{
-            return  amount *  codeToRate.get(currencyCode);
+            return  amount *  rate;
         }catch (Exception e ){
             return null;
         }
     }
 
     public Map<String,Double> getAllCodeCurrencyRate(){
+        Map<String,Double> codeToRate = new HashMap<>();
         SAXBuilder sxb = new SAXBuilder();
 
         try{
@@ -43,22 +44,9 @@ public class ConverterEjbBean implements IConverter{
         return codeToRate;
     }
 
-    public Map<Monnaie,Double> getAllDataMonnaie(){
-        SAXBuilder sxb = new SAXBuilder();
-
-        try{
-            connecToSite(sxb);
-            List<Element> elem = connecToSite(sxb);
-            elem.forEach(e -> codeToRate.put(e.getAttributeValue("currency"), Double.parseDouble(e.getAttributeValue("rate"))));
-
-        } catch (IOException | JDOMException e) {
-            e.printStackTrace();
-        }
-        return null;
-    }
-
+    @Override
     public Map<Monnaie, Double> getDataMonnaie(Double monnaie)throws IOException, JDOMException{
-        getAllCodeCurrencyRate();
+        Map<String,Double> codeToRate = getAllCodeCurrencyRate();
         SAXBuilder sxb = new SAXBuilder();
         URL url = new URL("https://www.currency-iso.org/dam/downloads/lists/list_one.xml");
         HttpsURLConnection con = (HttpsURLConnection)url.openConnection();
@@ -72,7 +60,7 @@ public class ConverterEjbBean implements IConverter{
                     List<String> namePays = new ArrayList<>();
                     namePays.add(e.getChild("CtryNm").getValue());
                     Monnaie m = new Monnaie(namePays,e.getChild("CcyNm").getValue(),currency,codeToRate.get(currency));
-                    allData.put(m, euroToOtherCurrency(monnaie,currency));
+                    allData.put(m, euroToOtherCurrency(monnaie,m.getTauxChange()));
                 }
             }
         });

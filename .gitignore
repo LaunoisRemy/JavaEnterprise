@@ -50,7 +50,7 @@ $RECYCLE.BIN/
 
 #spring
 .springBeans
-
+src/main/resources/properties/mail.properties
 target/
 pom.xml.tag
 pom.xml.releaseBackup

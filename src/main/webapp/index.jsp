@@ -1,6 +1,10 @@
 <%@ page import="java.util.List" %>
 <%@ page import="java.util.ArrayList" %>
 <%@ page import="java.util.Collections" %>
+<%@ page import="javax.naming.Context" %>
+<%@ page import="javax.naming.InitialContext" %>
+<%@ page import="javax.jms.*" %>
+<%@ page import="javax.naming.NamingException" %>
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 
 <!DOCTYPE html>
@@ -49,7 +53,7 @@
         String email = request.getParameter("email");
         if(amount != null && currency != null &&amount.length()>0 && !amount.equals("null") && !currency.equals("null")){
         Double d = new Double(amount);
-        Double converti = convert.euroToOtherCurrency(d,currency);
+        Double converti = convert.euroToOtherCurrency(d,convert.getAllCodeCurrencyRate().get(currency));
         if(converti != null){
     %>
     <p>
@@ -59,6 +63,34 @@
     <%
             }
         if(email !=null && email.length() != 0){
+            try {
+                Context jndiContext = null;
+                jndiContext = new InitialContext();
+
+                javax.jms.ConnectionFactory connectionFactory =
+                    (QueueConnectionFactory)jndiContext.lookup("/ConnectionFactory");
+
+
+            Connection connection = connectionFactory.createConnection();
+
+            Session sessionQ =
+                    connection.createSession(false,Session.AUTO_ACKNOWLEDGE);
+
+
+            TextMessage message = sessionQ.createTextMessage();
+
+            message.setText(amount+"#"+email);
+
+            javax.jms.Queue queue =
+                    (javax.jms.Queue) jndiContext.lookup("queue/MailContent");
+
+            MessageProducer messageProducer=sessionQ.createProducer(queue);
+
+
+                messageProducer.send(message);
+            } catch (JMSException | NamingException e) {
+                e.printStackTrace();
+            }
     %>
     <p>
         <%= email%>

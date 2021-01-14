@@ -11,6 +11,7 @@ import java.util.Map;
 
 @Remote
 public interface IConverter {
-    Double euroToOtherCurrency(double amount, String currencyCode);
+    Double euroToOtherCurrency(double amount,Double rate);
     Map<String,Double> getAllCodeCurrencyRate();
+    Map<Monnaie, Double> getDataMonnaie(Double monnaie)throws IOException, JDOMException;
 }
