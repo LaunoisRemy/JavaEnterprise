@@ -40,11 +40,13 @@
             </select>
 
         </div>
+        <input type="text" class="form-control" id="email" name="email" aria-describedby="Enter your email" placeholder="Enter your email">
         <button type="submit" class="btn btn-primary">Let's go</button>
     </form>
     <%
         String amount = request.getParameter("amount");
         String currency = request.getParameter("currency");
+        String email = request.getParameter("email");
         if(amount != null && currency != null &&amount.length()>0 && !amount.equals("null") && !currency.equals("null")){
         Double d = new Double(amount);
         Double converti = convert.euroToOtherCurrency(d,currency);
@@ -56,6 +58,13 @@
     </p>
     <%
             }
+        if(email !=null && email.length() != 0){
+    %>
+    <p>
+        <%= email%>
+    </p>
+    <%
+        }
         }
     %>
 

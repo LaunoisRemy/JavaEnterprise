@@ -4,6 +4,7 @@ import org.jdom2.*;
 import org.jdom2.input.SAXBuilder;
 
 import javax.ejb.Remote;
+import javax.ejb.Stateful;
 import javax.ejb.Stateless;
 import javax.net.ssl.HttpsURLConnection;
 import java.io.IOException;
@@ -12,11 +13,12 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 @Remote
-@Stateless(name = "ConverterEjbEJB")
+@Stateful(name = "ConverterEjbEJB")
 public class ConverterEjbBean implements IConverter{
     public ConverterEjbBean() {
     }
     Map<String,Double> codeToRate = new HashMap<>();
+    Map<Monnaie,Double> allData = new HashMap<>();
 
     @Override
     public Double euroToOtherCurrency(double amount, String currencyCode) {
@@ -39,6 +41,42 @@ public class ConverterEjbBean implements IConverter{
             e.printStackTrace();
         }
         return codeToRate;
+    }
+
+    public Map<Monnaie,Double> getAllDataMonnaie(){
+        SAXBuilder sxb = new SAXBuilder();
+
+        try{
+            connecToSite(sxb);
+            List<Element> elem = connecToSite(sxb);
+            elem.forEach(e -> codeToRate.put(e.getAttributeValue("currency"), Double.parseDouble(e.getAttributeValue("rate"))));
+
+        } catch (IOException | JDOMException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    public Map<Monnaie, Double> getDataMonnaie(Double monnaie)throws IOException, JDOMException{
+        getAllCodeCurrencyRate();
+        SAXBuilder sxb = new SAXBuilder();
+        URL url = new URL("https://www.currency-iso.org/dam/downloads/lists/list_one.xml");
+        HttpsURLConnection con = (HttpsURLConnection)url.openConnection();
+        Document document = sxb . build (con.getInputStream());
+        Element racine = document.getRootElement ( ) ;
+        List<Element> elem = racine.getChild ( "CcyTbl" ).getChildren();
+        elem.forEach(e -> {
+            if(e.getChild("Ccy") != null){
+                String currency = e.getChild("Ccy").getValue();
+                if(codeToRate.containsKey(currency)){
+                    List<String> namePays = new ArrayList<>();
+                    namePays.add(e.getChild("CtryNm").getValue());
+                    Monnaie m = new Monnaie(namePays,e.getChild("CcyNm").getValue(),currency,codeToRate.get(currency));
+                    allData.put(m, euroToOtherCurrency(monnaie,currency));
+                }
+            }
+        });
+        return allData;
     }
 
     public List<String> getAllCodeCurrency(){
